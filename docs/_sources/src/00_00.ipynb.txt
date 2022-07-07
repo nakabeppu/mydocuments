@@ -1,0 +1,30 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# 0. Python"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.8.13 ('base')",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python",
+   "version": "3.8.13"
+  },
+  "orig_nbformat": 4,
+  "vscode": {
+   "interpreter": {
+    "hash": "195d00c3bc2576aa3aa8d34b1ef69c319bc4c5e1d04057dba8a69b2c34c3aaa0"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
