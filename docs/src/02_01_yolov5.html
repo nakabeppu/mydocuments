@@ -1,0 +1,2742 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YOLOV5 &mdash;   ドキュメント</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="YOLO to ONNX" href="02_02_yolo2onnx.html" />
+    <link rel="prev" title="ー 2. Computer Vision ー" href="02_00.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> 
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="00_00.html">ー 0. Python ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_00.html">ー 1. Machine Learning ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_01.html">基礎</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_00.html">ー 2. Computer Vision ー</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YOLOV5</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Git-Clone">Git Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#データの前処理">データの前処理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#モデル構築">モデル構築</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#学習">学習</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#推論">推論</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#可視化">可視化</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_02_yolo2onnx.html">YOLO to ONNX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_00.html">ー 3. Natural Language Processing ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_01_bert.html">BERT による特徴量エンジニアリング</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_00.html">ー 4. Medical ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_00.html">ー 5. Methodology ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_00.html">ー 6. Time Seriese ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_00.html">ー 7. Graphs ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_00.html">ー 8. Speech ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_00.html">ー 9. Adversarial ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_00.html">ー 10. Reinforcement Learning ー</a></li>
+<li class="toctree-l1"><a class="reference internal" href="99_00.html">ー 99. Miscellaneous ー</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html"></a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>YOLOV5</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/src/02_01_yolov5.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="YOLOV5">
+<h1>YOLOV5<a class="headerlink" href="#YOLOV5" title="このヘッドラインへのパーマリンク"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># !unzip -q /content/drive/MyDrive/タスク/テスト作成/Answer_object_detection/data/question_01.zip</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># !unzip -q /content/question_01/train.zip</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># !unzip -q /content/question_01/test.zip</span>
+</pre></div>
+</div>
+</div>
+<section id="Git-Clone">
+<h2>Git Clone<a class="headerlink" href="#Git-Clone" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span>!git clone https://github.com/ultralytics/yolov5  # clone
+!pip install -qr yolov5/requirements.txt  # install
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Cloning into &#39;yolov5&#39;...
+remote: Enumerating objects: 13286, done.
+remote: Total 13286 (delta 0), reused 0 (delta 0), pack-reused 13286
+Receiving objects: 100% (13286/13286), 11.98 MiB | 14.43 MiB/s, done.
+Resolving deltas: 100% (9254/9254), done.
+     |████████████████████████████████| 596 kB 5.4 MB/s
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="データの前処理">
+<h2>データの前処理<a class="headerlink" href="#データの前処理" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">annotations_path</span> <span class="o">=</span> <span class="s1">&#39;/content/train/annotations&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dataset</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;file&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;width&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;height&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;xmin&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;ymin&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;xmax&#39;</span><span class="p">:[],</span>
+            <span class="s1">&#39;ymax&#39;</span><span class="p">:[],</span>
+           <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">anno</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">annotations_path</span><span class="o">+</span><span class="s1">&#39;/*.xml&#39;</span><span class="p">):</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">anno</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">iter</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;size&#39;</span> <span class="ow">in</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;width&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="s1">&#39;height&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                    <span class="n">height</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="s1">&#39;object&#39;</span> <span class="ow">in</span> <span class="n">elem</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">elem</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">text</span>
+                    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">width</span><span class="p">]</span>
+                    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">height</span><span class="p">]</span>
+                    <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;file&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">anno</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">4</span><span class="p">]]</span>
+
+                <span class="k">if</span> <span class="s1">&#39;bndbox&#39;</span> <span class="ow">in</span> <span class="n">attr</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="s1">&#39;xmin&#39;</span> <span class="ow">in</span> <span class="n">dim</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                            <span class="n">xmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+                            <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">xmin</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s1">&#39;ymin&#39;</span> <span class="ow">in</span> <span class="n">dim</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                            <span class="n">ymin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+                            <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">ymin</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s1">&#39;xmax&#39;</span> <span class="ow">in</span> <span class="n">dim</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                            <span class="n">xmax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+                            <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">xmax</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s1">&#39;ymax&#39;</span> <span class="ow">in</span> <span class="n">dim</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                            <span class="n">ymax</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">text</span><span class="p">)))</span>
+                            <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]</span><span class="o">+=</span><span class="p">[</span><span class="n">ymax</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+  <div id="df-a8fdb610-f472-469b-81bc-09089df48376">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>file</th>
+      <th>name</th>
+      <th>width</th>
+      <th>height</th>
+      <th>xmin</th>
+      <th>ymin</th>
+      <th>xmax</th>
+      <th>ymax</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>maksssksksss78</td>
+      <td>with_mask</td>
+      <td>301</td>
+      <td>400</td>
+      <td>108</td>
+      <td>231</td>
+      <td>186</td>
+      <td>336</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>116</td>
+      <td>88</td>
+      <td>150</td>
+      <td>122</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>160</td>
+      <td>79</td>
+      <td>193</td>
+      <td>118</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>235</td>
+      <td>43</td>
+      <td>272</td>
+      <td>87</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>304</td>
+      <td>68</td>
+      <td>336</td>
+      <td>102</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-a8fdb610-f472-469b-81bc-09089df48376')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-a8fdb610-f472-469b-81bc-09089df48376 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-a8fdb610-f472-469b-81bc-09089df48376');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/src_02_01_yolov5_12_0.png" src="../_images/src_02_01_yolov5_12_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">name_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;with_mask&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s1">&#39;mask_weared_incorrect&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;without_mask&#39;</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">name_dict</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+  <div id="df-7eceeffd-f1f7-4be5-9e85-ca900f9869ff">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>file</th>
+      <th>name</th>
+      <th>width</th>
+      <th>height</th>
+      <th>xmin</th>
+      <th>ymin</th>
+      <th>xmax</th>
+      <th>ymax</th>
+      <th>class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>maksssksksss78</td>
+      <td>with_mask</td>
+      <td>301</td>
+      <td>400</td>
+      <td>108</td>
+      <td>231</td>
+      <td>186</td>
+      <td>336</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>116</td>
+      <td>88</td>
+      <td>150</td>
+      <td>122</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>160</td>
+      <td>79</td>
+      <td>193</td>
+      <td>118</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>235</td>
+      <td>43</td>
+      <td>272</td>
+      <td>87</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>304</td>
+      <td>68</td>
+      <td>336</td>
+      <td>102</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-7eceeffd-f1f7-4be5-9e85-ca900f9869ff')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-7eceeffd-f1f7-4be5-9e85-ca900f9869ff button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-7eceeffd-f1f7-4be5-9e85-ca900f9869ff');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;/content/train/images&#39;</span><span class="p">)]</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+500
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+<span class="n">test</span><span class="p">,</span> <span class="n">val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length of Train =&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length of Valid =&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length of test =&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">test</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Length of Train = 450
+==============================
+Length of Valid = 35
+==============================
+Length of test = 15
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/train&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/val&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/test&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/train/images&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/train/labels&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/test/images&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/test/labels&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/val/images&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/val/labels&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="k">def</span> <span class="nf">copyImages</span><span class="p">(</span><span class="n">imageList</span><span class="p">,</span> <span class="n">folder_Name</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">imageList</span><span class="p">:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/content/train/images/&#39;</span><span class="o">+</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">img1</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">640</span><span class="p">,</span> <span class="mi">640</span><span class="p">))</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">img1</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;./yolov5/data/&quot;</span><span class="o">+</span><span class="n">folder_Name</span><span class="o">+</span><span class="s1">&#39;/images/&#39;</span><span class="o">+</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">copyImages</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">)</span>
+<span class="n">copyImages</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">)</span>
+<span class="n">copyImages</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">]</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span><span class="o">/</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;xmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ymax&#39;</span><span class="p">,</span> <span class="s1">&#39;xmin&#39;</span><span class="p">,</span> <span class="s1">&#39;ymin&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;xmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ymax&#39;</span><span class="p">,</span> <span class="s1">&#39;xmin&#39;</span><span class="p">,</span> <span class="s1">&#39;ymin&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+  <div id="df-8c823a94-9a13-4392-b854-d7ae8f35f3d0">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>file</th>
+      <th>name</th>
+      <th>width</th>
+      <th>height</th>
+      <th>xmin</th>
+      <th>ymin</th>
+      <th>xmax</th>
+      <th>ymax</th>
+      <th>class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>maksssksksss78</td>
+      <td>with_mask</td>
+      <td>301</td>
+      <td>400</td>
+      <td>229</td>
+      <td>369</td>
+      <td>395</td>
+      <td>537</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>185</td>
+      <td>250</td>
+      <td>240</td>
+      <td>347</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>256</td>
+      <td>224</td>
+      <td>308</td>
+      <td>335</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>376</td>
+      <td>122</td>
+      <td>435</td>
+      <td>247</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>486</td>
+      <td>193</td>
+      <td>537</td>
+      <td>290</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-8c823a94-9a13-4392-b854-d7ae8f35f3d0')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-8c823a94-9a13-4392-b854-d7ae8f35f3d0 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-8c823a94-9a13-4392-b854-d7ae8f35f3d0');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;x_center&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">640</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;y_center&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="mi">640</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;box_height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">640</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;box_width&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">640</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+  <div id="df-d7620abc-6f95-4bf8-b5a9-77ecd60cf919">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>file</th>
+      <th>name</th>
+      <th>width</th>
+      <th>height</th>
+      <th>xmin</th>
+      <th>ymin</th>
+      <th>xmax</th>
+      <th>ymax</th>
+      <th>class</th>
+      <th>x_center</th>
+      <th>y_center</th>
+      <th>box_height</th>
+      <th>box_width</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>maksssksksss78</td>
+      <td>with_mask</td>
+      <td>301</td>
+      <td>400</td>
+      <td>229</td>
+      <td>369</td>
+      <td>395</td>
+      <td>537</td>
+      <td>0</td>
+      <td>0.487500</td>
+      <td>0.707812</td>
+      <td>0.259375</td>
+      <td>0.262500</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>185</td>
+      <td>250</td>
+      <td>240</td>
+      <td>347</td>
+      <td>0</td>
+      <td>0.332031</td>
+      <td>0.466406</td>
+      <td>0.085938</td>
+      <td>0.151562</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>256</td>
+      <td>224</td>
+      <td>308</td>
+      <td>335</td>
+      <td>0</td>
+      <td>0.440625</td>
+      <td>0.436719</td>
+      <td>0.081250</td>
+      <td>0.173437</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>376</td>
+      <td>122</td>
+      <td>435</td>
+      <td>247</td>
+      <td>0</td>
+      <td>0.633594</td>
+      <td>0.288281</td>
+      <td>0.092188</td>
+      <td>0.195312</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>maksssksksss116</td>
+      <td>with_mask</td>
+      <td>400</td>
+      <td>225</td>
+      <td>486</td>
+      <td>193</td>
+      <td>537</td>
+      <td>290</td>
+      <td>0</td>
+      <td>0.799219</td>
+      <td>0.377344</td>
+      <td>0.079687</td>
+      <td>0.151562</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-d7620abc-6f95-4bf8-b5a9-77ecd60cf919')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-d7620abc-6f95-4bf8-b5a9-77ecd60cf919 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-d7620abc-6f95-4bf8-b5a9-77ecd60cf919');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;string&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">create_labels</span><span class="p">(</span><span class="n">image_list</span><span class="p">,</span> <span class="n">data_name</span><span class="p">):</span>
+    <span class="n">fileNames</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">image_list</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fileNames</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">file</span><span class="o">==</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">box_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">box_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;x_center&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;y_center&#39;</span><span class="p">]</span>\
+                        <span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;box_height&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;box_width&#39;</span><span class="p">])</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">box_list</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./yolov5/data/&#39;</span><span class="o">+</span><span class="n">data_name</span><span class="o">+</span><span class="s1">&#39;/labels/&#39;</span><span class="o">+</span><span class="n">name</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">create_labels</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="s1">&#39;train&#39;</span><span class="p">)</span>
+<span class="n">create_labels</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">)</span>
+<span class="n">create_labels</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="モデル構築">
+<h2>モデル構築<a class="headerlink" href="#モデル構築" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="n">cd</span> <span class="n">yolov5</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/content/yolov5
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">yolov5</span> <span class="kn">import</span> <span class="n">utils</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">yaml_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;train: data/train/images</span>
+<span class="s2">val: data/train/images</span>
+
+<span class="s2">nc: 3</span>
+<span class="s2">names: [&#39;with_mask&#39;, &#39;mask_weared_incorrect&#39;, &#39;without_mask&#39;]&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data/data.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+    <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml_text</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="n">cat</span> <span class="n">data</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+train: data/train/images
+val: data/train/images
+
+nc: 3
+names: [&#39;with_mask&#39;, &#39;mask_weared_incorrect&#39;, &#39;without_mask&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="学習">
+<h2>学習<a class="headerlink" href="#学習" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span>start = datetime.now()
+!python train.py --img 640 --batch 16 --epochs 100 --data data/data.yaml --weights yolov5s.pt --cache
+end = datetime.now()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>weights=yolov5s.pt, cfg=, data=data/data.yaml, hyp=data/hyps/hyp.scratch-low.yaml, epochs=100, batch_size=16, imgsz=640, rect=False, resume=False, nosave=False, noval=False, noautoanchor=False, noplots=False, evolve=None, bucket=, cache=ram, image_weights=False, device=, multi_scale=False, single_cls=False, optimizer=SGD, sync_bn=False, workers=8, project=runs/train, name=exp, exist_ok=False, quad=False, cos_lr=False, label_smoothing=0.0, patience=100, freeze=[0], save_period=-1, local_rank=-1, entity=None, upload_dataset=False, bbox_interval=-1, artifact_alias=latest
+<span class="ansi-blue-intense-fg ansi-bold">github: </span>up to date with https://github.com/ultralytics/yolov5 ✅
+YOLOv5 🚀 v6.1-177-gd059d1d torch 1.11.0+cu113 CUDA:0 (Tesla K80, 11441MiB)
+
+<span class="ansi-blue-intense-fg ansi-bold">hyperparameters: </span>lr0=0.01, lrf=0.01, momentum=0.937, weight_decay=0.0005, warmup_epochs=3.0, warmup_momentum=0.8, warmup_bias_lr=0.1, box=0.05, cls=0.5, cls_pw=1.0, obj=1.0, obj_pw=1.0, iou_t=0.2, anchor_t=4.0, fl_gamma=0.0, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, degrees=0.0, translate=0.1, scale=0.5, shear=0.0, perspective=0.0, flipud=0.0, fliplr=0.5, mosaic=1.0, mixup=0.0, copy_paste=0.0
+<span class="ansi-blue-intense-fg ansi-bold">Weights &amp; Biases: </span>run &#39;pip install wandb&#39; to automatically track and visualize YOLOv5 🚀 runs (RECOMMENDED)
+<span class="ansi-blue-intense-fg ansi-bold">TensorBoard: </span>Start with &#39;tensorboard --logdir runs/train&#39;, view at http://localhost:6006/
+Downloading https://ultralytics.com/assets/Arial.ttf to /root/.config/Ultralytics/Arial.ttf...
+100% 755k/755k [00:00&lt;00:00, 18.3MB/s]
+Downloading https://github.com/ultralytics/yolov5/releases/download/v6.0/yolov5s.pt to yolov5s.pt...
+100% 14.0M/14.0M [00:00&lt;00:00, 120MB/s]
+
+Overriding model.yaml nc=80 with nc=3
+
+                 from  n    params  module                                  arguments
+  0                -1  1      3520  models.common.Conv                      [3, 32, 6, 2, 2]
+  1                -1  1     18560  models.common.Conv                      [32, 64, 3, 2]
+  2                -1  1     18816  models.common.C3                        [64, 64, 1]
+  3                -1  1     73984  models.common.Conv                      [64, 128, 3, 2]
+  4                -1  2    115712  models.common.C3                        [128, 128, 2]
+  5                -1  1    295424  models.common.Conv                      [128, 256, 3, 2]
+  6                -1  3    625152  models.common.C3                        [256, 256, 3]
+  7                -1  1   1180672  models.common.Conv                      [256, 512, 3, 2]
+  8                -1  1   1182720  models.common.C3                        [512, 512, 1]
+  9                -1  1    656896  models.common.SPPF                      [512, 512, 5]
+ 10                -1  1    131584  models.common.Conv                      [512, 256, 1, 1]
+ 11                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, &#39;nearest&#39;]
+ 12           [-1, 6]  1         0  models.common.Concat                    [1]
+ 13                -1  1    361984  models.common.C3                        [512, 256, 1, False]
+ 14                -1  1     33024  models.common.Conv                      [256, 128, 1, 1]
+ 15                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, &#39;nearest&#39;]
+ 16           [-1, 4]  1         0  models.common.Concat                    [1]
+ 17                -1  1     90880  models.common.C3                        [256, 128, 1, False]
+ 18                -1  1    147712  models.common.Conv                      [128, 128, 3, 2]
+ 19          [-1, 14]  1         0  models.common.Concat                    [1]
+ 20                -1  1    296448  models.common.C3                        [256, 256, 1, False]
+ 21                -1  1    590336  models.common.Conv                      [256, 256, 3, 2]
+ 22          [-1, 10]  1         0  models.common.Concat                    [1]
+ 23                -1  1   1182720  models.common.C3                        [512, 512, 1, False]
+ 24      [17, 20, 23]  1     21576  models.yolo.Detect                      [3, [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]], [128, 256, 512]]
+Model summary: 270 layers, 7027720 parameters, 7027720 gradients, 15.9 GFLOPs
+
+Transferred 343/349 items from yolov5s.pt
+Scaled weight_decay = 0.0005
+<span class="ansi-blue-intense-fg ansi-bold">optimizer:</span> SGD with parameter groups 57 weight (no decay), 60 weight, 60 bias
+<span class="ansi-blue-intense-fg ansi-bold">albumentations: </span>version 1.0.3 required by YOLOv5, but version 0.1.12 is currently installed
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>Scanning &#39;/content/yolov5/data/train/labels&#39; images and labels...450 found, 0 missing, 0 empty, 0 corrupt: 100% 450/450 [00:01&lt;00:00, 435.22it/s]
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>New cache created: /content/yolov5/data/train/labels.cache
+<span class="ansi-blue-intense-fg ansi-bold">train: </span>Caching images (0.6GB ram): 100% 450/450 [00:05&lt;00:00, 78.25it/s]
+<span class="ansi-blue-intense-fg ansi-bold">val: </span>Scanning &#39;/content/yolov5/data/train/labels.cache&#39; images and labels... 450 found, 0 missing, 0 empty, 0 corrupt: 100% 450/450 [00:00&lt;?, ?it/s]
+<span class="ansi-blue-intense-fg ansi-bold">val: </span>Caching images (0.6GB ram): 100% 450/450 [00:06&lt;00:00, 70.42it/s]
+Plotting labels to runs/train/exp/labels.jpg...
+
+<span class="ansi-blue-intense-fg ansi-bold">AutoAnchor: </span>5.62 anchors/target, 0.999 Best Possible Recall (BPR). Current anchors are a good fit to dataset ✅
+Image sizes 640 train, 640 val
+Using 2 dataloader workers
+Logging results to <span class="ansi-bold">runs/train/exp</span>
+Starting training for 100 epochs...
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      0/99     3.24G    0.1042   0.05887    0.0326        22       640: 100% 29/29 [00:34&lt;00:00,  1.18s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95:  33% 5/15 [00:07&lt;00:14,  1.46s/it]WARNING: NMS time limit 1.060s exceeded
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:21&lt;00:00,  1.41s/it]
+                 all        450       2162     0.0713     0.0739     0.0383      0.008
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      1/99      3.7G   0.08447   0.04861   0.02054        14       640: 100% 29/29 [00:32&lt;00:00,  1.10s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:12&lt;00:00,  1.17it/s]
+                 all        450       2162      0.734       0.11      0.041    0.00881
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      2/99      3.7G   0.09067   0.03714   0.01759        23       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:11&lt;00:00,  1.36it/s]
+                 all        450       2162      0.719      0.151     0.0532     0.0116
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      3/99      3.7G   0.08831   0.03505   0.01692         3       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.40it/s]
+                 all        450       2162      0.479        0.4      0.205     0.0486
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      4/99      3.7G   0.08109   0.03467   0.01459        20       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.43it/s]
+                 all        450       2162      0.515      0.404      0.182     0.0419
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      5/99      3.7G   0.07631   0.03006   0.01221         9       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.44it/s]
+                 all        450       2162      0.649      0.414       0.36      0.103
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      6/99      3.7G   0.06847   0.02802  0.009747         5       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.45it/s]
+                 all        450       2162      0.601      0.356      0.275     0.0684
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      7/99      3.7G   0.06779   0.02646  0.008943        21       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.47it/s]
+                 all        450       2162      0.772      0.475      0.516      0.221
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      8/99      3.7G   0.06508   0.02709  0.008862        17       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.46it/s]
+                 all        450       2162      0.779      0.523      0.537      0.233
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+      9/99      3.7G   0.06303    0.0296  0.007813         7       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162      0.848       0.48      0.575      0.282
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     10/99      3.7G   0.05923   0.02504  0.007176        14       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162       0.78      0.524      0.553      0.273
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     11/99      3.7G   0.05703   0.02798  0.007739        19       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.889      0.524      0.599      0.326
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     12/99      3.7G   0.05694   0.02543  0.007827        29       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.867      0.521      0.637      0.353
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     13/99      3.7G   0.05205   0.02776  0.006748        16       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162      0.835      0.506      0.569        0.3
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     14/99      3.7G   0.04981   0.02797  0.006613        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162      0.887      0.517      0.632      0.297
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     15/99      3.7G   0.04939   0.02812  0.006291        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162      0.903       0.54      0.667      0.391
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     16/99      3.7G   0.04711   0.02796  0.006501         9       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.885      0.476       0.64      0.343
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     17/99      3.7G   0.04629   0.02565   0.00631         5       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162       0.93      0.547      0.708      0.423
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     18/99      3.7G   0.04456    0.0261  0.006285        18       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162       0.94      0.562      0.679      0.395
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     19/99      3.7G    0.0428   0.02788  0.005862         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162       0.95      0.572      0.733      0.471
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     20/99      3.7G   0.04376    0.0256  0.005387        17       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.48it/s]
+                 all        450       2162      0.953      0.586      0.726       0.43
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     21/99      3.7G   0.04484   0.02805  0.005863        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162       0.94      0.528      0.671      0.399
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     22/99      3.7G   0.04315    0.0295  0.005665        60       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.955      0.541      0.715      0.438
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     23/99      3.7G   0.04276     0.028  0.005705        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.962      0.595      0.732      0.462
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     24/99      3.7G   0.04149   0.02429  0.005167         8       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.956      0.584      0.737      0.467
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     25/99      3.7G   0.04137   0.02517  0.005626        18       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.961      0.594      0.742      0.462
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     26/99      3.7G   0.04094   0.02373  0.004982        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.961      0.603       0.76      0.487
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     27/99      3.7G   0.04069   0.02395  0.005124        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.905      0.573      0.711      0.472
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     28/99      3.7G   0.04161   0.02729  0.005272        40       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.972      0.602      0.757      0.509
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     29/99      3.7G   0.03867   0.02461  0.005043        21       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.967      0.594      0.766      0.494
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     30/99      3.7G   0.03778   0.02442   0.00454        26       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.974      0.609      0.765      0.518
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     31/99      3.7G    0.0383   0.02486  0.004799         9       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.966      0.589      0.703      0.473
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     32/99      3.7G   0.03796   0.02382  0.004534         6       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.46it/s]
+                 all        450       2162       0.98      0.614      0.754      0.515
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     33/99      3.7G   0.03832   0.02572  0.004728        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162       0.96      0.618       0.78      0.528
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     34/99      3.7G   0.03689   0.02408  0.005269        19       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162       0.63      0.776      0.791      0.534
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     35/99      3.7G   0.03743   0.02451   0.00382        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.642      0.767      0.786      0.534
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     36/99      3.7G   0.03509   0.02489  0.004311        17       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.665      0.768      0.808      0.554
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     37/99      3.7G   0.03444   0.02209   0.00482         6       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.683      0.778      0.826      0.569
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     38/99      3.7G   0.03428   0.02595  0.004634        51       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.691      0.756      0.785       0.53
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     39/99      3.7G   0.03273    0.0254  0.005028        12       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162       0.76      0.774      0.808      0.555
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     40/99      3.7G   0.02918   0.02427  0.005294         7       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.785      0.773      0.829      0.547
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     41/99      3.7G    0.0308   0.02522   0.00409        19       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.851      0.768      0.831      0.572
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     42/99      3.7G   0.03008   0.02644  0.004342        42       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.897      0.756      0.836      0.579
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     43/99      3.7G   0.03039   0.02624   0.00443        31       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162       0.93      0.768      0.846      0.611
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     44/99      3.7G   0.02717   0.02329  0.004332         4       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.893      0.779      0.863      0.603
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     45/99      3.7G   0.02696   0.02324  0.003749         7       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.903      0.783      0.842      0.606
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     46/99      3.7G    0.0273   0.02343  0.003641         6       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.905      0.783      0.861      0.613
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     47/99      3.7G   0.02868    0.0233  0.003822        14       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.956      0.781      0.881       0.63
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     48/99      3.7G   0.02519     0.022  0.003935         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.912      0.805      0.865       0.62
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     49/99      3.7G   0.02607   0.02375  0.003534        15       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.931      0.811       0.88      0.632
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     50/99      3.7G   0.02689   0.02412  0.003446        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.952      0.797      0.876      0.616
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     51/99      3.7G   0.02628   0.02297  0.003258         5       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.937      0.826       0.88       0.64
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     52/99      3.7G   0.02629   0.02476  0.003244         5       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.957      0.827      0.895      0.635
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     53/99      3.7G   0.02545   0.02342  0.003683        21       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.944      0.814       0.89      0.633
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     54/99      3.7G   0.02496   0.02176  0.003682        15       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.937      0.827      0.908       0.64
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     55/99      3.7G   0.02572   0.02273  0.002962        12       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.896      0.867      0.922      0.661
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     56/99      3.7G   0.02393   0.02185   0.00316        20       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.945      0.861      0.924      0.666
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     57/99      3.7G    0.0247   0.02229  0.003002         6       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.939      0.847      0.901      0.651
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     58/99      3.7G   0.02474   0.02108  0.002604         5       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.959      0.852      0.925      0.677
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     59/99      3.7G   0.02402   0.02042  0.003106         9       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.947      0.855      0.919      0.681
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     60/99      3.7G   0.02406   0.02236  0.002479        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.969       0.85      0.919       0.68
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     61/99      3.7G   0.02405   0.02109  0.003217         9       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.957      0.861      0.927      0.682
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     62/99     3.71G   0.02365     0.021  0.002881         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.967      0.858      0.928      0.692
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     63/99     3.71G   0.02348   0.02031  0.003068         3       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.984       0.84      0.933      0.697
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     64/99     3.71G   0.02283   0.01957  0.002669        16       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.979      0.865       0.94       0.69
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     65/99     3.71G    0.0229   0.02169  0.002468        20       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.953      0.872      0.944      0.699
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     66/99     3.71G   0.02333   0.02256  0.002572         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.968      0.868      0.947      0.696
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     67/99     3.71G   0.02259   0.02128  0.002764         9       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.978       0.87      0.931      0.684
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     68/99     3.71G   0.02221   0.02133    0.0027         7       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.975      0.872      0.938      0.689
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     69/99     3.71G   0.02284     0.022  0.002199        16       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.978      0.862      0.954      0.716
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     70/99     3.71G   0.02229   0.02015   0.00235         9       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.975      0.872      0.953       0.72
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     71/99     3.71G    0.0218   0.01994  0.002446         7       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.979      0.877      0.957      0.724
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     72/99     3.71G   0.02215   0.02245  0.001956        13       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.977      0.877      0.948      0.721
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     73/99     3.71G   0.02206   0.02123  0.002202         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.965      0.875      0.965      0.743
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     74/99     3.71G   0.02141   0.01996  0.002404         2       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.977      0.875      0.965       0.74
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     75/99     3.71G   0.02129   0.01998  0.002406        18       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.964      0.877      0.967      0.747
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     76/99     3.71G   0.02063   0.01864  0.002289        10       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.987      0.869      0.968      0.741
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     77/99     3.71G   0.02137   0.02036   0.00192        22       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.989      0.874      0.967      0.746
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     78/99     3.71G   0.02116   0.01939  0.002025        14       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.985      0.879      0.975      0.749
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     79/99     3.71G   0.02103    0.0209  0.001855        32       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.985       0.88      0.974      0.756
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     80/99     3.71G   0.02043   0.02023   0.00189         7       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.49it/s]
+                 all        450       2162      0.937       0.94       0.98      0.769
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     81/99     3.71G    0.0202   0.02094  0.001672         6       640: 100% 29/29 [00:32&lt;00:00,  1.11s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.932      0.946      0.982      0.761
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     82/99     3.71G   0.02078   0.02003  0.001573        16       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.946      0.929      0.982      0.765
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     83/99     3.71G   0.02065   0.01918  0.001961         4       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.931      0.951      0.981      0.756
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     84/99     3.71G   0.02034   0.02099  0.002168        14       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.937       0.95      0.981      0.767
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     85/99     3.71G   0.02142   0.02066   0.00219        42       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.932       0.95      0.977      0.762
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     86/99     3.71G   0.02019   0.02049  0.001839        22       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.961      0.945      0.982      0.769
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     87/99     3.71G   0.02058   0.02008  0.001801        41       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.968      0.949      0.986      0.772
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     88/99     3.71G   0.02002   0.01874  0.002203        11       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162       0.97      0.951      0.986      0.775
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     89/99     3.71G   0.01983   0.01958  0.001688         3       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.973      0.952      0.985      0.776
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     90/99     3.71G   0.01958   0.01897  0.001435        14       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162       0.96      0.956      0.983      0.772
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     91/99     3.71G   0.01961   0.01907  0.001429        14       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.966      0.951      0.984      0.773
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     92/99     3.71G   0.01974   0.01824  0.001828        18       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:10&lt;00:00,  1.50it/s]
+                 all        450       2162      0.948      0.961      0.983      0.777
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     93/99     3.71G   0.01963   0.02065  0.001453        27       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.966      0.956      0.986      0.782
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     94/99     3.71G   0.01986   0.02052  0.001589        19       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.973      0.949      0.987      0.782
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     95/99     3.71G   0.01914   0.01828  0.001778         4       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.976      0.953      0.987      0.783
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     96/99     3.71G   0.01955   0.01973  0.001596         3       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.975      0.954      0.988      0.786
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     97/99     3.71G   0.01904   0.01879  0.001374         8       640: 100% 29/29 [00:32&lt;00:00,  1.13s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162      0.979       0.95      0.988      0.786
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     98/99     3.71G   0.01907   0.01971  0.001998        27       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.51it/s]
+                 all        450       2162      0.979       0.95      0.988      0.792
+
+     Epoch   gpu_mem       box       obj       cls    labels  img_size
+     99/99     3.71G   0.01937   0.02141  0.001679        11       640: 100% 29/29 [00:32&lt;00:00,  1.12s/it]
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:09&lt;00:00,  1.50it/s]
+                 all        450       2162       0.98       0.95      0.988      0.792
+
+100 epochs completed in 1.202 hours.
+Optimizer stripped from runs/train/exp/weights/last.pt, 14.5MB
+Optimizer stripped from runs/train/exp/weights/best.pt, 14.5MB
+
+Validating runs/train/exp/weights/best.pt...
+Fusing layers...
+Model summary: 213 layers, 7018216 parameters, 0 gradients, 15.8 GFLOPs
+               Class     Images     Labels          P          R     mAP@.5 mAP@.5:.95: 100% 15/15 [00:14&lt;00:00,  1.06it/s]
+                 all        450       2162      0.979       0.95      0.988      0.791
+           with_mask        450       1683      0.983      0.988      0.994       0.82
+mask_weared_incorrect        450         62          1      0.872      0.977      0.793
+        without_mask        450        417      0.955       0.99      0.993      0.761
+Results saved to <span class="ansi-bold">runs/train/exp</span>
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Runtime =&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Runtime = 0:37:28.814237
+</pre></div></div>
+</div>
+</section>
+<section id="推論">
+<h2>推論<a class="headerlink" href="#推論" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span>!python detect.py --source data/test/images/ --weight runs/train/exp3/weights/best.pt --name expTestImage --conf 0.4
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-blue-intense-fg ansi-bold">detect: </span>weights=[&#39;runs/train/exp3/weights/best.pt&#39;], source=data/test/images/, data=data/coco128.yaml, imgsz=[640, 640], conf_thres=0.4, iou_thres=0.45, max_det=1000, device=, view_img=False, save_txt=False, save_conf=False, save_crop=False, nosave=False, classes=None, agnostic_nms=False, augment=False, visualize=False, update=False, project=runs/detect, name=expTestImage, exist_ok=False, line_thickness=3, hide_labels=False, hide_conf=False, half=False, dnn=False
+YOLOv5 🚀 v6.1-163-gb53917d torch 1.11.0+cu113 CUDA:0 (Tesla K80, 11441MiB)
+
+Fusing layers...
+Model summary: 213 layers, 7018216 parameters, 0 gradients, 15.8 GFLOPs
+image 1/25 /content/yolov5/data/test/images/maksssksksss102.png: 480x640 2 with_masks, Done. (0.029s)
+image 2/25 /content/yolov5/data/test/images/maksssksksss117.png: 480x640 1 with_mask, Done. (0.029s)
+image 3/25 /content/yolov5/data/test/images/maksssksksss121.png: 480x640 7 without_masks, Done. (0.029s)
+image 4/25 /content/yolov5/data/test/images/maksssksksss145.png: 480x640 3 without_masks, Done. (0.029s)
+image 5/25 /content/yolov5/data/test/images/maksssksksss199.png: 480x640 4 with_masks, 1 without_mask, Done. (0.029s)
+image 6/25 /content/yolov5/data/test/images/maksssksksss202.png: 480x640 7 with_masks, Done. (0.029s)
+image 7/25 /content/yolov5/data/test/images/maksssksksss213.png: 480x640 1 with_mask, Done. (0.029s)
+image 8/25 /content/yolov5/data/test/images/maksssksksss217.png: 480x640 1 without_mask, Done. (0.029s)
+image 9/25 /content/yolov5/data/test/images/maksssksksss314.png: 480x640 6 with_masks, Done. (0.029s)
+image 10/25 /content/yolov5/data/test/images/maksssksksss354.png: 480x640 27 with_masks, Done. (0.029s)
+image 11/25 /content/yolov5/data/test/images/maksssksksss473.png: 480x640 3 with_masks, 1 without_mask, Done. (0.029s)
+image 12/25 /content/yolov5/data/test/images/maksssksksss545.png: 480x640 7 with_masks, 8 without_masks, Done. (0.029s)
+image 13/25 /content/yolov5/data/test/images/maksssksksss555.png: 480x640 4 with_masks, Done. (0.029s)
+image 14/25 /content/yolov5/data/test/images/maksssksksss558.png: 480x640 14 with_masks, 4 without_masks, Done. (0.029s)
+image 15/25 /content/yolov5/data/test/images/maksssksksss589.png: 480x640 1 with_mask, Done. (0.029s)
+image 16/25 /content/yolov5/data/test/images/maksssksksss6.png: 480x640 1 with_mask, Done. (0.029s)
+image 17/25 /content/yolov5/data/test/images/maksssksksss602.png: 480x640 1 with_mask, Done. (0.029s)
+image 18/25 /content/yolov5/data/test/images/maksssksksss619.png: 480x640 2 with_masks, Done. (0.029s)
+image 19/25 /content/yolov5/data/test/images/maksssksksss71.png: 480x640 5 with_masks, 1 without_mask, Done. (0.029s)
+image 20/25 /content/yolov5/data/test/images/maksssksksss757.png: 480x640 1 without_mask, Done. (0.029s)
+image 21/25 /content/yolov5/data/test/images/maksssksksss797.png: 480x640 7 with_masks, Done. (0.029s)
+image 22/25 /content/yolov5/data/test/images/maksssksksss799.png: 480x640 7 with_masks, Done. (0.029s)
+image 23/25 /content/yolov5/data/test/images/maksssksksss833.png: 480x640 1 with_mask, Done. (0.029s)
+image 24/25 /content/yolov5/data/test/images/maksssksksss88.png: 480x640 1 with_mask, Done. (0.029s)
+image 25/25 /content/yolov5/data/test/images/maksssksksss91.png: 480x640 4 with_masks, Done. (0.029s)
+Speed: 0.5ms pre-process, 29.0ms inference, 1.6ms NMS per image at shape (1, 3, 640, 640)
+Results saved to <span class="ansi-bold">runs/detect/expTestImage2</span>
+</pre></div></div>
+</div>
+</section>
+<section id="可視化">
+<h2>可視化<a class="headerlink" href="#可視化" title="このヘッドラインへのパーマリンク"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">color_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;with_mask&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="s1">&#39;mask_weared_incorrect&#39;</span><span class="p">:</span>  <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+    <span class="s1">&#39;without_mask&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">show_image</span><span class="p">(</span><span class="n">img_id</span><span class="p">):</span>
+    <span class="n">df_image</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">file</span><span class="o">==</span><span class="n">img_id</span><span class="p">]</span>
+    <span class="n">df_image</span><span class="p">[[</span><span class="s1">&#39;xmin&#39;</span><span class="p">,</span> <span class="s1">&#39;ymin&#39;</span><span class="p">,</span> <span class="s1">&#39;xmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ymax&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df_image</span><span class="p">[[</span><span class="s1">&#39;xmin&#39;</span><span class="p">,</span> <span class="s1">&#39;ymin&#39;</span><span class="p">,</span> <span class="s1">&#39;xmax&#39;</span><span class="p">,</span> <span class="s1">&#39;ymax&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;int64&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;data/test/images/&#39;</span><span class="o">+</span><span class="n">img_id</span><span class="o">+</span><span class="s1">&#39;.png&#39;</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="n">imge</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df_image</span><span class="p">)):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">df_image</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">imge</span><span class="p">,</span>
+                      <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;xmin&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ymin&#39;</span><span class="p">]),</span>
+                      <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;xmax&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;ymax&#39;</span><span class="p">]),</span>
+                      <span class="n">color</span><span class="o">=</span><span class="n">color_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]],</span>
+                      <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">img_pred</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;runs/detect/expTestImage2/&#39;</span><span class="o">+</span><span class="n">img_id</span><span class="o">+</span><span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+    <span class="c1"># ===================================</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">17</span><span class="p">))</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">imge</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Image with Truth Box&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_pred</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Image with Predicted Box&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">show_image</span><span class="p">(</span><span class="s1">&#39;maksssksksss102&#39;</span><span class="p">)</span>
+<span class="n">show_image</span><span class="p">(</span><span class="s1">&#39;maksssksksss117&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers).
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/src_02_01_yolov5_42_1.png" src="../_images/src_02_01_yolov5_42_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/src_02_01_yolov5_42_2.png" src="../_images/src_02_01_yolov5_42_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># 学習済みモデル</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;ultralytics/yolov5&#39;</span><span class="p">,</span> <span class="s1">&#39;custom&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;runs/train/exp3/weights/best.pt&#39;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Using cache found in /root/.cache/torch/hub/ultralytics_yolov5_master
+<span class="ansi-red-intense-fg ansi-bold">requirements:</span> PyYAML&gt;=5.3.1 not found and is required by YOLOv5, attempting auto-update...
+Requirement already satisfied: PyYAML&gt;=5.3.1 in /usr/local/lib/python3.7/dist-packages (6.0)
+
+<span class="ansi-red-intense-fg ansi-bold">requirements:</span> 1 package updated per /content/yolov5/requirements.txt
+<span class="ansi-red-intense-fg ansi-bold">requirements:</span> ⚠️ <span class="ansi-bold">Restart runtime or rerun command for updates to take effect</span>
+
+YOLOv5 🚀 v6.1-163-gb53917d torch 1.11.0+cu113 CPU
+
+Fusing layers...
+Model summary: 213 layers, 7018216 parameters, 0 gradients, 15.8 GFLOPs
+Adding AutoShape...
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="n">paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;data/test/images/*.png&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">imgs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">imgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">len</span><span class="p">(</span><span class="n">imgs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+25
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">imgs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">640</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+25
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">results</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+image 1/25: 480x640 2 with_masks
+image 2/25: 480x640 1 with_mask
+image 3/25: 480x640 7 without_masks
+image 4/25: 480x640 3 without_masks
+image 5/25: 480x640 4 with_masks, 1 without_mask
+image 6/25: 480x640 7 with_masks
+image 7/25: 480x640 1 with_mask
+image 8/25: 480x640 1 without_mask
+image 9/25: 480x640 7 with_masks
+image 10/25: 480x640 32 with_masks
+image 11/25: 480x640 3 with_masks, 1 without_mask
+image 12/25: 480x640 8 with_masks, 9 without_masks
+image 13/25: 480x640 4 with_masks
+image 14/25: 480x640 16 with_masks, 5 without_masks
+image 15/25: 480x640 1 with_mask
+image 16/25: 480x640 1 with_mask
+image 17/25: 480x640 1 with_mask
+image 18/25: 480x640 2 with_masks
+image 19/25: 480x640 5 with_masks, 2 without_masks
+image 20/25: 480x640 1 without_mask
+image 21/25: 480x640 9 with_masks
+image 22/25: 480x640 7 with_masks
+image 23/25: 480x640 1 with_mask
+image 24/25: 480x640 1 with_mask
+image 25/25: 480x640 5 with_masks
+Speed: 25.9ms pre-process, 313.5ms inference, 1.1ms NMS per image at shape (25, 3, 480, 640)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># results.xyxy[0]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-python notranslate"><div class="highlight"><pre>
+<span></span><span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))):</span>
+    <span class="n">df_</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">pandas</span><span class="p">()</span><span class="o">.</span><span class="n">xyxy</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;data/test/images/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">df_</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+    <span class="n">results_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">results_df</span><span class="p">,</span> <span class="n">df_</span><span class="p">])</span>
+<span class="n">results_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+  <div id="df-d2aa331e-42d4-4f90-abfb-2bffbf0974e6">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>xmin</th>
+      <th>ymin</th>
+      <th>xmax</th>
+      <th>ymax</th>
+      <th>confidence</th>
+      <th>class</th>
+      <th>name</th>
+      <th>path</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>342.870758</td>
+      <td>126.946487</td>
+      <td>400.551483</td>
+      <td>219.864914</td>
+      <td>0.782481</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss102</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>184.777985</td>
+      <td>4.586975</td>
+      <td>211.562622</td>
+      <td>38.822174</td>
+      <td>0.653822</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss102</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>273.143738</td>
+      <td>272.095123</td>
+      <td>480.840820</td>
+      <td>409.250580</td>
+      <td>0.964706</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss117</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>144.604660</td>
+      <td>65.604950</td>
+      <td>193.061172</td>
+      <td>116.956207</td>
+      <td>0.899693</td>
+      <td>2</td>
+      <td>without_mask</td>
+      <td>maksssksksss121</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>382.483917</td>
+      <td>88.885384</td>
+      <td>423.858185</td>
+      <td>129.479401</td>
+      <td>0.896138</td>
+      <td>2</td>
+      <td>without_mask</td>
+      <td>maksssksksss121</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>143</th>
+      <td>173.831757</td>
+      <td>95.323898</td>
+      <td>280.287628</td>
+      <td>245.321121</td>
+      <td>0.937874</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss91</td>
+    </tr>
+    <tr>
+      <th>144</th>
+      <td>390.472656</td>
+      <td>139.161362</td>
+      <td>499.295105</td>
+      <td>300.622681</td>
+      <td>0.905453</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss91</td>
+    </tr>
+    <tr>
+      <th>145</th>
+      <td>469.360474</td>
+      <td>210.884583</td>
+      <td>552.166687</td>
+      <td>380.362244</td>
+      <td>0.833239</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss91</td>
+    </tr>
+    <tr>
+      <th>146</th>
+      <td>319.052887</td>
+      <td>0.665493</td>
+      <td>404.339813</td>
+      <td>81.675613</td>
+      <td>0.429323</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss91</td>
+    </tr>
+    <tr>
+      <th>147</th>
+      <td>104.638702</td>
+      <td>10.954498</td>
+      <td>147.840485</td>
+      <td>89.735504</td>
+      <td>0.280298</td>
+      <td>0</td>
+      <td>with_mask</td>
+      <td>maksssksksss91</td>
+    </tr>
+  </tbody>
+</table>
+<p>148 rows × 8 columns</p>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-d2aa331e-42d4-4f90-abfb-2bffbf0974e6')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-d2aa331e-42d4-4f90-abfb-2bffbf0974e6 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-d2aa331e-42d4-4f90-abfb-2bffbf0974e6');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="02_00.html" class="btn btn-neutral float-left" title="ー 2. Computer Vision ー" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02_02_yolo2onnx.html" class="btn btn-neutral float-right" title="YOLO to ONNX" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, taichi nakabeppu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
