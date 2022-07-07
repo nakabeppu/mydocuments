@@ -4,7 +4,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# ーーー 10. Reinforcement Learning"
+    "# ー 10. Reinforcement Learning ー"
    ]
   }
  ],
