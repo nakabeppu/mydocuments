@@ -1,20 +1,7 @@
 # -*- coding: utf-8 -*-
-#
-# Configuration file for the Sphinx documentation builder.
-#
-# This file does only contain a selection of the most common options. For a
-# full list see the documentation:
-# http://www.sphinx-doc.org/en/stable/config
 
 # -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+nbsphinx_execute = 'never'
 
 
 # -- Project information -----------------------------------------------------
@@ -41,6 +28,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'nbsphinx',
     'sphinx.ext.mathjax',
+    # 'recommonmark'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -49,7 +37,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.rst', '.md']
+source_suffix = ['.rst']
 source_parsers = {
     '.md' : 'recommonmark.parser.CommonMarkParser'
 }
@@ -73,17 +61,17 @@ latex_docclass = {'manual': 'jsbook'}
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '**.ipynb_checkpoints']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+# pygments_style = 'sphinx'
 
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
-# import sphinx_rtd_theme
-
-html_theme = "alabaster"
+#import sphinx_rtd_theme
+html_theme = 'sphinx_rtd_theme'
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+# html_theme = "alabaster"
 
 # html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Theme options are theme-specific and customize the look and feel of a theme

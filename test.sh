@@ -1,6 +1,6 @@
+rm -r ./docs
 make clean
 make html
-rm -r ./docs
 mkdir ./docs
 cp -rp _build/html/* ./docs
 cd ./docs
