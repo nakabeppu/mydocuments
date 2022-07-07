@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = '技術調査'
+project = ''
 copyright = '2022, taichi nakabeppu'
 author = 'taichi nakabeppu'
 
