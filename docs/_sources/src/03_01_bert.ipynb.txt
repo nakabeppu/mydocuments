@@ -1,0 +1,436 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# BERT による特徴量エンジニアリング"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# !pip install -q transformers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'4.9.2'"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import torch\n",
+    "import transformers\n",
+    "\n",
+    "from transformers import BertTokenizer\n",
+    "from tqdm import tqdm\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "import japanize_matplotlib\n",
+    "from sklearn.cluster import KMeans\n",
+    "\n",
+    "transformers.__version__"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>text</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>翻訳タスクにおいて、Seq2seq(RNNベースEncoder-Decoderモデル)よりも...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>RNNもCNNも使わずに Attentionのみを使用したEncoder-Decoderモデ...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                text\n",
+       "0  翻訳タスクにおいて、Seq2seq(RNNベースEncoder-Decoderモデル)よりも...\n",
+       "1  RNNもCNNも使わずに Attentionのみを使用したEncoder-Decoderモデ..."
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# dummy data\n",
+    "data = {\n",
+    "    'text': [\n",
+    "        '翻訳タスクにおいて、Seq2seq(RNNベースEncoder-Decoderモデル)よりも早くて精度が高い。',\n",
+    "        'RNNもCNNも使わずに Attentionのみを使用したEncoder-Decoderモデルで計算量も精度も改善した。'\n",
+    "    ]\n",
+    "}\n",
+    "df = pd.DataFrame(data)\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 前処理\n",
+    "# def cleaning(x):\n",
+    "#     return x.replace('\\u3000', '').replace('■', '').replace('   ', '').replace('\\n', '').replace(' ', '').replace('【', '').replace('】', '')\n",
+    "# df['message'] = df['massage'].aaply(lambda x: cleaning(x))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# BERT\n",
+    "class BertSequenceVectorizer:\n",
+    "    def __init__(self):\n",
+    "        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'\n",
+    "        self.model_name = 'cl-tohoku/bert-base-japanese'\n",
+    "        self.tokenizer = BertTokenizer.from_pretrained(self.model_name)\n",
+    "        self.bert_model = transformers.BertModel.from_pretrained(self.model_name)\n",
+    "        self.bert_model = self.bert_model.to(self.device)\n",
+    "        self.max_len = 128\n",
+    "\n",
+    "    def vectorize(self, sentence : str) -> np.array:\n",
+    "        inp = self.tokenizer.encode(sentence)\n",
+    "        len_inp = len(inp)\n",
+    "\n",
+    "        if len_inp >= self.max_len:\n",
+    "            inputs = inp[:self.max_len]\n",
+    "            masks = [1] * self.max_len\n",
+    "        else:\n",
+    "            inputs = inp + [0] * (self.max_len - len_inp)\n",
+    "            masks = [1] * len_inp + [0] * (self.max_len - len_inp)\n",
+    "\n",
+    "        inputs_tensor = torch.tensor([inputs], dtype=torch.long).to(self.device)\n",
+    "        masks_tensor = torch.tensor([masks], dtype=torch.long).to(self.device)\n",
+    "\n",
+    "        bert_out = self.bert_model(inputs_tensor, masks_tensor)\n",
+    "        seq_out, pooled_out = bert_out['last_hidden_state'], bert_out['pooler_output']\n",
+    "\n",
+    "        if torch.cuda.is_available():\n",
+    "            return seq_out[0][0].cpu().detach().numpy() # 0番目は [CLS] token, 768 dim の文章特徴量\n",
+    "        else:\n",
+    "            return seq_out[0][0].detach().numpy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def to_bert_feature(col:str)->pd.DataFrame:\n",
+    "    BSV = BertSequenceVectorizer()\n",
+    "    feature_df = pd.DataFrame()\n",
+    "    feature_df['description'] = df[col]\n",
+    "    feature_df['description_feature'] = df[col].apply(lambda x : BSV.vectorize(x))\n",
+    "    return feature_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "The tokenizer class you load from this checkpoint is not the same type as the class this function is called from. It may result in unexpected tokenization. \n",
+      "The tokenizer class you load from this checkpoint is 'BertJapaneseTokenizer'. \n",
+      "The class this function is called from is 'BertTokenizer'.\n",
+      "Some weights of the model checkpoint at cl-tohoku/bert-base-japanese were not used when initializing BertModel: ['cls.predictions.transform.dense.weight', 'cls.predictions.bias', 'cls.predictions.decoder.weight', 'cls.predictions.transform.LayerNorm.weight', 'cls.predictions.transform.LayerNorm.bias', 'cls.predictions.transform.dense.bias', 'cls.seq_relationship.weight', 'cls.seq_relationship.bias']\n",
+      "- This IS expected if you are initializing BertModel from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).\n",
+      "- This IS NOT expected if you are initializing BertModel from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>description</th>\n",
+       "      <th>description_feature</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>翻訳タスクにおいて、Seq2seq(RNNベースEncoder-Decoderモデル)よりも...</td>\n",
+       "      <td>[0.07872914, -0.04343322, -0.26853547, -0.7479...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>RNNもCNNも使わずに Attentionのみを使用したEncoder-Decoderモデ...</td>\n",
+       "      <td>[0.037794013, 0.14948744, -0.37833312, -0.1988...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                         description  \\\n",
+       "0  翻訳タスクにおいて、Seq2seq(RNNベースEncoder-Decoderモデル)よりも...   \n",
+       "1  RNNもCNNも使わずに Attentionのみを使用したEncoder-Decoderモデ...   \n",
+       "\n",
+       "                                 description_feature  \n",
+       "0  [0.07872914, -0.04343322, -0.26853547, -0.7479...  \n",
+       "1  [0.037794013, 0.14948744, -0.37833312, -0.1988...  "
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# 実行\n",
+    "feature_df = to_bert_feature(col='text')\n",
+    "feature_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 768 のベクトルのリストを行列に変換\n",
+    "def to_matrix(feature:pd.DataFrame)->pd.DataFrame:\n",
+    "    out_df = pd.DataFrame()\n",
+    "    for feature in feature['description_feature']:\n",
+    "        df_ = pd.DataFrame(feature)\n",
+    "        out_df = pd.concat([out_df, df_], axis=1)\n",
+    "    out_df = out_df.T\n",
+    "    out_df.index = range(len(out_df))\n",
+    "    return out_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "      <th>4</th>\n",
+       "      <th>5</th>\n",
+       "      <th>6</th>\n",
+       "      <th>7</th>\n",
+       "      <th>8</th>\n",
+       "      <th>9</th>\n",
+       "      <th>...</th>\n",
+       "      <th>758</th>\n",
+       "      <th>759</th>\n",
+       "      <th>760</th>\n",
+       "      <th>761</th>\n",
+       "      <th>762</th>\n",
+       "      <th>763</th>\n",
+       "      <th>764</th>\n",
+       "      <th>765</th>\n",
+       "      <th>766</th>\n",
+       "      <th>767</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0.078729</td>\n",
+       "      <td>-0.043433</td>\n",
+       "      <td>-0.268535</td>\n",
+       "      <td>-0.747998</td>\n",
+       "      <td>0.217914</td>\n",
+       "      <td>0.291106</td>\n",
+       "      <td>-0.106979</td>\n",
+       "      <td>0.034716</td>\n",
+       "      <td>-0.213352</td>\n",
+       "      <td>-0.271663</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.120724</td>\n",
+       "      <td>0.280671</td>\n",
+       "      <td>0.696698</td>\n",
+       "      <td>0.224248</td>\n",
+       "      <td>0.154533</td>\n",
+       "      <td>-0.233368</td>\n",
+       "      <td>0.141323</td>\n",
+       "      <td>-0.076930</td>\n",
+       "      <td>0.015057</td>\n",
+       "      <td>0.416093</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.037794</td>\n",
+       "      <td>0.149487</td>\n",
+       "      <td>-0.378333</td>\n",
+       "      <td>-0.198880</td>\n",
+       "      <td>0.304334</td>\n",
+       "      <td>0.302627</td>\n",
+       "      <td>0.075751</td>\n",
+       "      <td>-0.335357</td>\n",
+       "      <td>-0.009018</td>\n",
+       "      <td>-0.043352</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.359600</td>\n",
+       "      <td>-0.170098</td>\n",
+       "      <td>0.252657</td>\n",
+       "      <td>0.150515</td>\n",
+       "      <td>0.506875</td>\n",
+       "      <td>-0.511551</td>\n",
+       "      <td>0.392957</td>\n",
+       "      <td>-0.286956</td>\n",
+       "      <td>0.241766</td>\n",
+       "      <td>0.346306</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>2 rows × 768 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        0         1         2         3         4         5         6    \\\n",
+       "0  0.078729 -0.043433 -0.268535 -0.747998  0.217914  0.291106 -0.106979   \n",
+       "1  0.037794  0.149487 -0.378333 -0.198880  0.304334  0.302627  0.075751   \n",
+       "\n",
+       "        7         8         9    ...       758       759       760       761  \\\n",
+       "0  0.034716 -0.213352 -0.271663  ... -0.120724  0.280671  0.696698  0.224248   \n",
+       "1 -0.335357 -0.009018 -0.043352  ...  0.359600 -0.170098  0.252657  0.150515   \n",
+       "\n",
+       "        762       763       764       765       766       767  \n",
+       "0  0.154533 -0.233368  0.141323 -0.076930  0.015057  0.416093  \n",
+       "1  0.506875 -0.511551  0.392957 -0.286956  0.241766  0.346306  \n",
+       "\n",
+       "[2 rows x 768 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "feature = to_matrix(feature_df)\n",
+    "feature"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.8.13 ('base')",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.13"
+  },
+  "orig_nbformat": 4,
+  "vscode": {
+   "interpreter": {
+    "hash": "195d00c3bc2576aa3aa8d34b1ef69c319bc4c5e1d04057dba8a69b2c34c3aaa0"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
