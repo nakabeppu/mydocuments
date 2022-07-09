@@ -6,13 +6,6 @@
    "source": [
     "# ー 7. Optimization ー"
    ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "x"
-   ]
   }
  ],
  "metadata": {
